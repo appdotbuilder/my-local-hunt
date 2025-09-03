@@ -1,9 +1,19 @@
+import { db } from '../db';
+import { productsTable } from '../db/schema';
 import { type Product } from '../schema';
+import { eq, desc } from 'drizzle-orm';
 
 export async function getProductsByAuthor(authorId: string): Promise<Product[]> {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is fetching all products created by a specific author.
-  // Should return products where author_id matches the input authorId.
-  // Should order by creation date (newest first).
-  return Promise.resolve([]);
+  try {
+    const results = await db.select()
+      .from(productsTable)
+      .where(eq(productsTable.author_id, authorId))
+      .orderBy(desc(productsTable.created_at))
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Get products by author failed:', error);
+    throw error;
+  }
 }
